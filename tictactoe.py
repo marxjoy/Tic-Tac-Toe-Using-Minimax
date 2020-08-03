@@ -120,28 +120,60 @@ def minimax(board):
     if board[1][1] == EMPTY:
         return (1,1)
 
-    max_deep = len(actions(board))
 
-    def max_value(board):
+
+    def max_value(board, n):
+        n += 1
         if terminal(board):
-            return utility(board)
+            return utility(board),n
         v = -float('inf')
         for act in actions(board):
-            v = max(v, min_value(result(board,act)))
-        return v
+            mv, n = min_value(result(board,act), n)
+            v = max(v, mv)
+        return v,n
 
-    def min_value(board):
+    def min_value(board, n):
+        n += 1
         if terminal(board):
-            return utility(board)
+            return utility(board),n
         v = float('inf')
         for act in actions(board):
-            v = min(v, max_value(result(board,act)))
-        return v
+            mv, n = max_value(result(board,act), n)
+            v = min(v, mv)
+        return v,n
+
 
     if player(board) == X:
         target = 'maximize'
-        z = max_value(board)
+        possibilities = set()
+        res = dict()
+        for act in actions(board):
+            n = 0
+            v, new_n = max_value(board, n)
+            possibilities.add((v, new_n, act))
+        for v, n, act in possibilities:
+            score = v * (10/n)
+            res.update({score:act})
+        print(res)
+        res2 = [v for k,v in sorted(res.items())]
+        print(res2)
+        return res2[0]
+
+
+
 
     if player(board) == O:
         target = 'minimize'
-        z = min_value(board)
+        possibilities = set()
+        res = dict()
+        for act in actions(board):
+            n = 0
+            v, new_n = min_value(board, n)
+            possibilities.add((v, new_n, act))
+        for v, n, act in possibilities:
+            score = v * (10)
+            res.update({score:act})
+        print(res)
+        res2 = [v for k,v in sorted(res.items())]
+        print(res2)
+        return res2[-1]
