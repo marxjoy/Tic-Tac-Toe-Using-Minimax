@@ -122,58 +122,36 @@ def minimax(board):
 
 
 
-    def max_value(board, n):
-        n += 1
+    def max_value(board,n):
+        #print(n)
         if terminal(board):
-            return utility(board),n
+            return utility(board)
         v = -float('inf')
         for act in actions(board):
-            mv, n = min_value(result(board,act), n)
+            mv = min_value(result(board,act),n+1)
             v = max(v, mv)
-        return v,n
+        return v * n
 
-    def min_value(board, n):
-        n += 1
+    def min_value(board,n):
+        #print(n)
         if terminal(board):
-            return utility(board),n
+            return utility(board)
         v = float('inf')
         for act in actions(board):
-            mv, n = max_value(result(board,act), n)
+            mv = max_value(result(board,act),n+1)
             v = min(v, mv)
-        return v,n
+        return v
 
-
+    print('--------------------')
     if player(board) == X:
         target = 'maximize'
-        possibilities = set()
-        res = dict()
+
+        v = -float('inf')
+        chosen_act = None
         for act in actions(board):
-            n = 0
-            v, new_n = max_value(board, n)
-            possibilities.add((v, new_n, act))
-        for v, n, act in possibilities:
-            score = v * (10/n)
-            res.update({score:act})
-        print(res)
-        res2 = [v for k,v in sorted(res.items())]
-        print(res2)
-        return res2[0]
-
-
-
-
-    if player(board) == O:
-        target = 'minimize'
-        possibilities = set()
-        res = dict()
-        for act in actions(board):
-            n = 0
-            v, new_n = min_value(board, n)
-            possibilities.add((v, new_n, act))
-        for v, n, act in possibilities:
-            score = v * (10)
-            res.update({score:act})
-        print(res)
-        res2 = [v for k,v in sorted(res.items())]
-        print(res2)
-        return res2[-1]
+            mv = max_value(board,0)
+            if mv > v:
+                v = mv
+                chosen_act = act
+            print(mv, act)
+        return chosen_act
