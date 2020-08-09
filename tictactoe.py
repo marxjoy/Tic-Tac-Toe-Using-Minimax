@@ -117,41 +117,53 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    if board[1][1] == EMPTY:
-        return (1,1)
+    # if board[1][1] == EMPTY:
+    #     return (1,1)
 
 
 
-    def max_value(board,n):
+    def max_value(board):
         #print(n)
         if terminal(board):
             return utility(board)
         v = -float('inf')
         for act in actions(board):
-            mv = min_value(result(board,act),n+1)
+            mv = min_value(result(board,act)) - len(actions(board))
             v = max(v, mv)
-        return v * n
+        return v
 
-    def min_value(board,n):
+    def min_value(board):
         #print(n)
         if terminal(board):
             return utility(board)
         v = float('inf')
         for act in actions(board):
-            mv = max_value(result(board,act),n+1)
+            mv = max_value(result(board,act)) + len(actions(board))
             v = min(v, mv)
         return v
+
+
 
     print('--------------------')
     if player(board) == X:
         target = 'maximize'
-
-        v = -float('inf')
-        chosen_act = None
+        pos = {}
         for act in actions(board):
-            mv = max_value(board,0)
-            if mv > v:
-                v = mv
-                chosen_act = act
-            print(mv, act)
-        return chosen_act
+            mv = max_value(result(board,act))
+            print(act, mv)
+            pos.update({mv: act})
+        mv = sorted(pos.keys())[0]
+        if winner(result(board, pos[mv])) == O:
+            mv = sorted(pos.keys())[1]
+        return pos[mv]
+    if player(board) == O:
+        target = 'minimize'
+        pos = {}
+        for act in actions(board):
+            mv = min_value(result(board,act))
+            print(act, mv)
+            pos.update({mv: act})
+        mv = sorted(pos.keys())[-1]
+        if winner(result(board, pos[mv])) == X:
+            mv = sorted(pos.keys())[-2]
+        return pos[mv]
