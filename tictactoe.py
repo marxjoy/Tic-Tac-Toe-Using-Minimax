@@ -128,7 +128,7 @@ def minimax(board):
             return utility(board)
         v = -float('inf')
         for act in actions(board):
-            mv = min_value(result(board,act)) - len(actions(board))
+            mv = min_value(result(board,act))
             v = max(v, mv)
         return v
 
@@ -138,7 +138,7 @@ def minimax(board):
             return utility(board)
         v = float('inf')
         for act in actions(board):
-            mv = max_value(result(board,act)) + len(actions(board))
+            mv = max_value(result(board,act))
             v = min(v, mv)
         return v
 
@@ -149,21 +149,17 @@ def minimax(board):
         target = 'maximize'
         pos = {}
         for act in actions(board):
-            mv = max_value(result(board,act))
+            mv = min_value(result(board,act))
             print(act, mv)
             pos.update({mv: act})
-        mv = sorted(pos.keys())[0]
-        if winner(result(board, pos[mv])) == O:
-            mv = sorted(pos.keys())[1]
+        mv = sorted(pos.keys())[-1]
         return pos[mv]
     if player(board) == O:
         target = 'minimize'
         pos = {}
         for act in actions(board):
-            mv = min_value(result(board,act))
+            mv = max_value(result(board,act))
             print(act, mv)
             pos.update({mv: act})
-        mv = sorted(pos.keys())[-1]
-        if winner(result(board, pos[mv])) == X:
-            mv = sorted(pos.keys())[-2]
+        mv = sorted(pos.keys())[0]
         return pos[mv]
